@@ -1,5 +1,7 @@
 package valtra
 
+import "fmt"
+
 func Validate[T any](value T, validations ...func(T) error) []error {
 	errs := []error{}
 
@@ -11,4 +13,15 @@ func Validate[T any](value T, validations ...func(T) error) []error {
 	}
 
 	return errs
+}
+
+func Required[T comparable]() func(T) error {
+	return func(v T) error {
+		var zero T
+		if v == zero {
+			return fmt.Errorf("value is required")
+		}
+
+		return nil
+	}
 }
