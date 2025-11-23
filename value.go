@@ -42,3 +42,27 @@ func (v Value[T]) Errors() []error {
 func (v Value[T]) IsValid() bool {
 	return len(v.errs) == 0
 }
+
+// Validate applies all provided validation functions for
+// the given value.
+//
+// Each validation function that returns an
+// error will add that error to the value's error list.
+//
+// Example:
+//
+//	v := valtra.Validate(25,
+//	    valtra.Required[int](),
+//	    valtra.Min(20),
+//	    valtra.Max(30),
+//	)
+func (v Value[T]) Validate(validations ...func(Value[T]) error) Value[T] {
+	for _, fn := range validations {
+		err := fn(v)
+		if err != nil {
+			v.errs = append(v.errs, err)
+		}
+	}
+
+	return v
+}

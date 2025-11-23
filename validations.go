@@ -5,35 +5,6 @@ import (
 	"regexp"
 )
 
-// Validate applies all provided validation functions for
-// the given value.
-//
-// Each validation function that returns an
-// error will add that error to the value's error list.
-//
-// Example:
-//
-//	v := valtra.Validate(25,
-//	    valtra.Required[int](),
-//	    valtra.Min(20),
-//	    valtra.Max(30),
-//	)
-func Validate[T any](value T, validations ...func(Value[T]) error) Value[T] {
-	v := Value[T]{
-		value: value,
-		errs:  []error{},
-	}
-
-	for _, fn := range validations {
-		err := fn(v)
-		if err != nil {
-			v.errs = append(v.errs, err)
-		}
-	}
-
-	return v
-}
-
 // Required returns a validation that ensures the value is
 // not the zero value for its type.
 //
