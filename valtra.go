@@ -2,6 +2,7 @@ package valtra
 
 import (
 	"fmt"
+	"regexp"
 )
 
 // Value holds a value to be validated along with and any
@@ -208,6 +209,32 @@ func MinLengthMap[K comparable, V any](min int) func(Value[map[K]V]) error {
 	return func(v Value[map[K]V]) error {
 		if len(v.value) < min {
 			return fmt.Errorf("value's length cannot be smaller than %v", min)
+		}
+
+		return nil
+	}
+}
+
+// emailRegex is a practical, internationally-aware email format.
+// Supports Unicode characters (accents, non-Latin scripts)
+// in email addresses.
+var emailRegex = regexp.MustCompile(`^(?:"(?:[^"]|\\")*"|[\p{L}\p{N}\p{M}._%+-]+)@[\p{L}\p{N}\p{M}.-]+\.[\p{L}\p{M}]{2,}$`)
+
+// Email returns a validation that ensures the value
+// is a valid email address.
+//
+// It uses a practical, internationally-aware pattern
+// that catches common errors, while remaining permissive.
+//
+// For true validation, send a confirmation email.
+//
+// Example:
+//
+//	valtra.Validate("user@example.com",, valtra.Email())
+func Email() func(Value[string]) error {
+	return func(v Value[string]) error {
+		if !emailRegex.MatchString(v.value) {
+			return fmt.Errorf("value must be in correct email format")
 		}
 
 		return nil
