@@ -117,3 +117,99 @@ func Min[T Ordered](min T) func(Value[T]) error {
 		return nil
 	}
 }
+
+// MaxLengthString returns a validation that ensures the
+// length of a string does not exceed the given maximum.
+//
+// Example:
+//
+//	valtra.Validate("username", valtra.MaxLengthString(20))
+func MaxLengthString[T ~string](max int) func(Value[T]) error {
+	return func(v Value[T]) error {
+		if len(v.value) > max {
+			return fmt.Errorf("value's length cannot be larger than %v", max)
+		}
+
+		return nil
+	}
+}
+
+// MaxLengthSlice returns a validation that ensures the
+// length of a slice does not exceed the given maximum.
+//
+// Example:
+//
+//	valtra.Validate([]int{1}, valtra.MaxLengthSlice(2))
+func MaxLengthSlice[T any](max int) func(Value[[]T]) error {
+	return func(v Value[[]T]) error {
+		if len(v.value) > max {
+			return fmt.Errorf("value's length cannot be larger than %v", max)
+		}
+
+		return nil
+	}
+}
+
+// MaxLengthMap returns a validation that ensures the
+// length of a map does not exceed the given maximum.
+//
+// Example:
+//
+//	valtra.Validate(map[string]int{"no": 1}, valtra.MaxLengthMap(2))
+func MaxLengthMap[K comparable, V any](max int) func(Value[map[K]V]) error {
+	return func(v Value[map[K]V]) error {
+		if len(v.value) > max {
+			return fmt.Errorf("value's length cannot be larger than %v", max)
+		}
+
+		return nil
+	}
+}
+
+// MinLengthString returns a validation that ensures the
+// length of a string is at least the given minimum.
+//
+// Example:
+//
+//	valtra.Validate("username", valtra.MinLengthString(5))
+func MinLengthString[T ~string](min int) func(Value[T]) error {
+	return func(v Value[T]) error {
+		if len(v.value) < min {
+			return fmt.Errorf("value's length cannot be smaller than %v", min)
+		}
+
+		return nil
+	}
+}
+
+// MinLengthSlice returns a validation that ensures the
+// length of a slice is at least the given minimum.
+//
+// Example:
+//
+//	valtra.Validate([]int{1}, valtra.MinLengthSlice(1))
+func MinLengthSlice[T any](min int) func(Value[[]T]) error {
+	return func(v Value[[]T]) error {
+		if len(v.value) < min {
+			return fmt.Errorf("value's length cannot be smaller than %v", min)
+		}
+
+		return nil
+	}
+}
+
+// MinLengthMap returns a validation that ensures the
+// length of a map is at least the given minimum.
+//
+// Example:
+//
+//	valtra.Validate(map[string]int{"no": 1}, valtra.MinLengthMap(1))
+func MinLengthMap[K comparable, V any](min int) func(Value[map[K]V]) error {
+	return func(v Value[map[K]V]) error {
+		if len(v.value) < min {
+			return fmt.Errorf("value's length cannot be smaller than %v", min)
+		}
+
+		return nil
+	}
+}
