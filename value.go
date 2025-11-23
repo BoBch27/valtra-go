@@ -7,6 +7,14 @@ type Value[T any] struct {
 	errs  []error
 }
 
+// Val creates a new Value[T] that wraps a value.
+func Val[T any](value T) Value[T] {
+	return Value[T]{
+		value: value,
+		errs:  []error{},
+	}
+}
+
 // Value returns the value being validated.
 func (v Value[T]) Value() T {
 	return v.value
