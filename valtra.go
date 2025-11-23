@@ -23,6 +23,23 @@ func (v Value[T]) Errors() []error {
 	return v.errs
 }
 
+// IsValid returns true if there are no validation errors,
+// false otherwise.
+//
+// This is a convenience method equivalent to checking
+// len(v.Errors()) == 0.
+//
+// Example:
+//
+//	v := valtra.Validate("test@example.com", valtra.Email())
+//	if v.IsValid() {
+//	    email := v.Value()
+//	    // proceed with valid email
+//	}
+func (v Value[T]) IsValid() bool {
+	return len(v.errs) == 0
+}
+
 // Validate applies all provided validation functions for
 // the given value.
 //
