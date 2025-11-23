@@ -1,24 +1,34 @@
 package valtra
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func Validate[T any](value T, validations ...func(T) error) []error {
-	errs := []error{}
+type Value[T any] struct {
+	value T
+	errs  []error
+}
+
+func Validate[T any](value T, validations ...func(Value[T]) error) Value[T] {
+	v := Value[T]{
+		value: value,
+		errs:  []error{},
+	}
 
 	for _, fn := range validations {
-		err := fn(value)
+		err := fn(v)
 		if err != nil {
-			errs = append(errs, err)
+			v.errs = append(v.errs, err)
 		}
 	}
 
-	return errs
+	return v
 }
 
-func Required[T comparable]() func(T) error {
-	return func(v T) error {
+func Required[T comparable]() func(Value[T]) error {
+	return func(v Value[T]) error {
 		var zero T
-		if v == zero {
+		if v.value == zero {
 			return fmt.Errorf("value is required")
 		}
 
@@ -32,9 +42,9 @@ type Ordered interface {
 		~float32 | ~float64
 }
 
-func Max[T Ordered](max T) func(T) error {
-	return func(v T) error {
-		if v > max {
+func Max[T Ordered](max T) func(Value[T]) error {
+	return func(v Value[T]) error {
+		if v.value > max {
 			return fmt.Errorf("value cannot be larger than %v", max)
 		}
 
@@ -42,9 +52,9 @@ func Max[T Ordered](max T) func(T) error {
 	}
 }
 
-func Min[T Ordered](min T) func(T) error {
-	return func(v T) error {
-		if v < min {
+func Min[T Ordered](min T) func(Value[T]) error {
+	return func(v Value[T]) error {
+		if v.value < min {
 			return fmt.Errorf("value cannot be smaller than %v", min)
 		}
 
