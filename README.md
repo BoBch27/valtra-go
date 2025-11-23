@@ -52,7 +52,9 @@ func (u User) Validate() []error {
     nameRes := valtra.Val(u.Name).Validate(valtra.Required[string](), valtra.MinLengthString[string](3))
     errs = append(errs, nameRes.Errors()...)
     
-    emailRes := valtra.Val(u.Email).Validate(valtra.Required[string](), valtra.Email())
+    // value name ("email" in this case) is optional
+    // used only in error messages (default is "value")
+    emailRes := valtra.Val(u.Email, "email").Validate(valtra.Required[string](), valtra.Email())
     errs = append(errs, emailRes.Errors()...)
 
     ageRes := valtra.Val(u.Age).Validate(valtra.Min[int](18))
