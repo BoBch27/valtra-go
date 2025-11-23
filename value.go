@@ -1,9 +1,10 @@
 package valtra
 
-// Value holds a value to be validated along with and any
-// validation errors that occur during validation.
+// Value holds a value to be validated along with its name
+// and any validation errors that occur during validation.
 type Value[T any] struct {
 	value T
+	name  string
 	errs  []error
 }
 
@@ -12,12 +13,22 @@ type Value[T any] struct {
 // This is the entry point for validation. Use the returned
 // Value's Validate method to apply validation rules.
 //
+// The optional name parameter is used in error messages to
+// identify which value failed validation. Default is
+// "value".
+//
 // Example:
 //
 //	v := valtra.Val(25).Validate(valtra.Max(30))
-func Val[T any](value T) Value[T] {
+func Val[T any](value T, name ...string) Value[T] {
+	valName := "value"
+	if len(name) > 0 && name[0] != "" {
+		valName = name[0]
+	}
+
 	return Value[T]{
 		value: value,
+		name:  valName,
 		errs:  []error{},
 	}
 }
@@ -25,6 +36,12 @@ func Val[T any](value T) Value[T] {
 // Value returns the value being validated.
 func (v Value[T]) Value() T {
 	return v.value
+}
+
+// Name returns the value's name, which is used to identify
+// the value in validation errors.
+func (v Value[T]) Name() string {
+	return v.name
 }
 
 // Errors returns all validation errors that have occurred.
