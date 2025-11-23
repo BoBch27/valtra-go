@@ -247,7 +247,7 @@ var emailRegex = regexp.MustCompile(`^(?:"(?:[^"]|\\")*"|[\p{L}\p{N}\p{M}._%+-]+
 //
 // Example:
 //
-//	valtra.Validate("user@example.com",, valtra.Email())
+//	valtra.Validate("user@example.com", valtra.Email())
 func Email() func(Value[string]) error {
 	return func(v Value[string]) error {
 		if !emailRegex.MatchString(v.value) {
