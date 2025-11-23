@@ -19,7 +19,7 @@ func Required[T comparable]() func(Value[T]) error {
 	return func(v Value[T]) error {
 		var zero T
 		if v.value == zero {
-			return fmt.Errorf("value is required")
+			return fmt.Errorf("%s is required", v.name)
 		}
 
 		return nil
@@ -46,7 +46,7 @@ type Ordered interface {
 func Max[T Ordered](max T) func(Value[T]) error {
 	return func(v Value[T]) error {
 		if v.value > max {
-			return fmt.Errorf("value cannot be larger than %v", max)
+			return fmt.Errorf("%s cannot be larger than %v", v.name, max)
 		}
 
 		return nil
@@ -65,7 +65,7 @@ func Max[T Ordered](max T) func(Value[T]) error {
 func Min[T Ordered](min T) func(Value[T]) error {
 	return func(v Value[T]) error {
 		if v.value < min {
-			return fmt.Errorf("value cannot be smaller than %v", min)
+			return fmt.Errorf("%s cannot be smaller than %v", v.name, min)
 		}
 
 		return nil
@@ -81,7 +81,7 @@ func Min[T Ordered](min T) func(Value[T]) error {
 func MaxLengthString[T ~string](max int) func(Value[T]) error {
 	return func(v Value[T]) error {
 		if len(v.value) > max {
-			return fmt.Errorf("value's length cannot be larger than %v", max)
+			return fmt.Errorf("%s's length cannot be larger than %v", v.name, max)
 		}
 
 		return nil
@@ -97,7 +97,7 @@ func MaxLengthString[T ~string](max int) func(Value[T]) error {
 func MaxLengthSlice[T any](max int) func(Value[[]T]) error {
 	return func(v Value[[]T]) error {
 		if len(v.value) > max {
-			return fmt.Errorf("value's length cannot be larger than %v", max)
+			return fmt.Errorf("%s's length cannot be larger than %v", v.name, max)
 		}
 
 		return nil
@@ -113,7 +113,7 @@ func MaxLengthSlice[T any](max int) func(Value[[]T]) error {
 func MaxLengthMap[K comparable, V any](max int) func(Value[map[K]V]) error {
 	return func(v Value[map[K]V]) error {
 		if len(v.value) > max {
-			return fmt.Errorf("value's length cannot be larger than %v", max)
+			return fmt.Errorf("%s's length cannot be larger than %v", v.name, max)
 		}
 
 		return nil
@@ -129,7 +129,7 @@ func MaxLengthMap[K comparable, V any](max int) func(Value[map[K]V]) error {
 func MinLengthString[T ~string](min int) func(Value[T]) error {
 	return func(v Value[T]) error {
 		if len(v.value) < min {
-			return fmt.Errorf("value's length cannot be smaller than %v", min)
+			return fmt.Errorf("%s's length cannot be smaller than %v", v.name, min)
 		}
 
 		return nil
@@ -145,7 +145,7 @@ func MinLengthString[T ~string](min int) func(Value[T]) error {
 func MinLengthSlice[T any](min int) func(Value[[]T]) error {
 	return func(v Value[[]T]) error {
 		if len(v.value) < min {
-			return fmt.Errorf("value's length cannot be smaller than %v", min)
+			return fmt.Errorf("%s's length cannot be smaller than %v", v.name, min)
 		}
 
 		return nil
@@ -161,7 +161,7 @@ func MinLengthSlice[T any](min int) func(Value[[]T]) error {
 func MinLengthMap[K comparable, V any](min int) func(Value[map[K]V]) error {
 	return func(v Value[map[K]V]) error {
 		if len(v.value) < min {
-			return fmt.Errorf("value's length cannot be smaller than %v", min)
+			return fmt.Errorf("%s's length cannot be smaller than %v", v.name, min)
 		}
 
 		return nil
@@ -187,7 +187,7 @@ var emailRegex = regexp.MustCompile(`^(?:"(?:[^"]|\\")*"|[\p{L}\p{N}\p{M}._%+-]+
 func Email() func(Value[string]) error {
 	return func(v Value[string]) error {
 		if !emailRegex.MatchString(v.value) {
-			return fmt.Errorf("value must be in correct email format")
+			return fmt.Errorf("%s must be in correct email format", v.name)
 		}
 
 		return nil
