@@ -49,13 +49,13 @@ type User struct {
 func (u User) Validate() []error {
     errs := []error{}
 
-    nameRes := valtra.Validate(u.Name, valtra.Required[string](), valtra.MinLengthString[string](3))
+    nameRes := valtra.Val(u.Name).Validate(valtra.Required[string](), valtra.MinLengthString[string](3))
     errs = append(errs, nameRes.Errors()...)
     
-    emailRes := valtra.Validate(u.Email, valtra.Required[string](), valtra.Email())
+    emailRes := valtra.Val(u.Email).Validate(valtra.Required[string](), valtra.Email())
     errs = append(errs, emailRes.Errors()...)
 
-    ageRes := valtra.Validate(u.Age, valtra.Min[int](18))
+    ageRes := valtra.Val(u.Age).Validate(valtra.Min[int](18))
     errs = append(errs, ageRes.Errors()...)
 
     return errs

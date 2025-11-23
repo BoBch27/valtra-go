@@ -8,6 +8,13 @@ type Value[T any] struct {
 }
 
 // Val creates a new Value[T] that wraps a value.
+//
+// This is the entry point for validation. Use the returned
+// Value's Validate method to apply validation rules.
+//
+// Example:
+//
+//	v := valtra.Val(25).Validate(valtra.Max(30))
 func Val[T any](value T) Value[T] {
 	return Value[T]{
 		value: value,
@@ -34,7 +41,7 @@ func (v Value[T]) Errors() []error {
 //
 // Example:
 //
-//	v := valtra.Validate("test@example.com", valtra.Email())
+//	v := valtra.Val("test@example.com").Validate(valtra.Email())
 //	if v.IsValid() {
 //	    email := v.Value()
 //	    // proceed with valid email
@@ -51,7 +58,7 @@ func (v Value[T]) IsValid() bool {
 //
 // Example:
 //
-//	v := valtra.Validate(25,
+//	v := valtra.Val(25).Validate(
 //	    valtra.Required[int](),
 //	    valtra.Min(20),
 //	    valtra.Max(30),

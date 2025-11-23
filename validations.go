@@ -13,8 +13,8 @@ import (
 //
 // Example:
 //
-//	valtra.Validate("", valtra.Required[string]())  // fails
-//	valtra.Validate("John", valtra.Required[string]())  // passes
+//	valtra.Val("").Validate(valtra.Required[string]())  // fails
+//	valtra.Val("John").Validate(valtra.Required[string]())  // passes
 func Required[T comparable]() func(Value[T]) error {
 	return func(v Value[T]) error {
 		var zero T
@@ -42,7 +42,7 @@ type Ordered interface {
 //
 // Example:
 //
-//	valtra.Validate(100, valtra.Max(100))
+//	valtra.Val(100).Validate(valtra.Max(100))
 func Max[T Ordered](max T) func(Value[T]) error {
 	return func(v Value[T]) error {
 		if v.value > max {
@@ -61,7 +61,7 @@ func Max[T Ordered](max T) func(Value[T]) error {
 //
 // Example:
 //
-//	valtra.Validate(5, valtra.Min(1))
+//	valtra.Val(5).Validate(valtra.Min(1))
 func Min[T Ordered](min T) func(Value[T]) error {
 	return func(v Value[T]) error {
 		if v.value < min {
@@ -77,7 +77,7 @@ func Min[T Ordered](min T) func(Value[T]) error {
 //
 // Example:
 //
-//	valtra.Validate("username", valtra.MaxLengthString(20))
+//	valtra.Val("username").Validate(valtra.MaxLengthString(20))
 func MaxLengthString[T ~string](max int) func(Value[T]) error {
 	return func(v Value[T]) error {
 		if len(v.value) > max {
@@ -93,7 +93,7 @@ func MaxLengthString[T ~string](max int) func(Value[T]) error {
 //
 // Example:
 //
-//	valtra.Validate([]int{1}, valtra.MaxLengthSlice(2))
+//	valtra.Val([]int{1}).Validate(valtra.MaxLengthSlice(2))
 func MaxLengthSlice[T any](max int) func(Value[[]T]) error {
 	return func(v Value[[]T]) error {
 		if len(v.value) > max {
@@ -109,7 +109,7 @@ func MaxLengthSlice[T any](max int) func(Value[[]T]) error {
 //
 // Example:
 //
-//	valtra.Validate(map[string]int{"no": 1}, valtra.MaxLengthMap(2))
+//	valtra.Val(map[string]int{"no": 1}).Validate(valtra.MaxLengthMap(2))
 func MaxLengthMap[K comparable, V any](max int) func(Value[map[K]V]) error {
 	return func(v Value[map[K]V]) error {
 		if len(v.value) > max {
@@ -125,7 +125,7 @@ func MaxLengthMap[K comparable, V any](max int) func(Value[map[K]V]) error {
 //
 // Example:
 //
-//	valtra.Validate("username", valtra.MinLengthString(5))
+//	valtra.Val("username").Validate(valtra.MinLengthString(5))
 func MinLengthString[T ~string](min int) func(Value[T]) error {
 	return func(v Value[T]) error {
 		if len(v.value) < min {
@@ -141,7 +141,7 @@ func MinLengthString[T ~string](min int) func(Value[T]) error {
 //
 // Example:
 //
-//	valtra.Validate([]int{1}, valtra.MinLengthSlice(1))
+//	valtra.Val([]int{1}).Validate(valtra.MinLengthSlice(1))
 func MinLengthSlice[T any](min int) func(Value[[]T]) error {
 	return func(v Value[[]T]) error {
 		if len(v.value) < min {
@@ -157,7 +157,7 @@ func MinLengthSlice[T any](min int) func(Value[[]T]) error {
 //
 // Example:
 //
-//	valtra.Validate(map[string]int{"no": 1}, valtra.MinLengthMap(1))
+//	valtra.Val(map[string]int{"no": 1}).Validate(valtra.MinLengthMap(1))
 func MinLengthMap[K comparable, V any](min int) func(Value[map[K]V]) error {
 	return func(v Value[map[K]V]) error {
 		if len(v.value) < min {
@@ -183,7 +183,7 @@ var emailRegex = regexp.MustCompile(`^(?:"(?:[^"]|\\")*"|[\p{L}\p{N}\p{M}._%+-]+
 //
 // Example:
 //
-//	valtra.Validate("user@example.com", valtra.Email())
+//	valtra.Val("user@example.com").Validate(valtra.Email())
 func Email() func(Value[string]) error {
 	return func(v Value[string]) error {
 		if !emailRegex.MatchString(v.value) {
