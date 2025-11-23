@@ -11,6 +11,17 @@ type Value[T any] struct {
 	errs  []error
 }
 
+// Value returns the value being validated.
+func (v Value[T]) Value() T {
+	return v.value
+}
+
+// Errors returns all validation errors that have occurred.
+// Returns an empty slice if validation passed.
+func (v Value[T]) Errors() []error {
+	return v.errs
+}
+
 // Validate applies all provided validation functions for
 // the given value.
 //
