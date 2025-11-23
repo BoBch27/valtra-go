@@ -15,7 +15,7 @@ Enter **Valtra**. It’s hardly even a package - just clever use of generics tha
 ## Features
 
 - **🔒 Type-safe**: Your IDE will yell at you before the compiler does. The compiler will yell at you before your users do.
-- **⚡ Zero reflection**: Because it's 2024 and we have generics now.
+- **⚡ Zero reflection**: Because it's 2025 and we have generics now.
 - **🎯 Declarative**: Reads like English, works like magic (except it's not magic, it's just good design).
 - **🔧 Composable**: Build complex validators from simple functions, like LEGO but for paranoid backend developers.
 - **📦 Minimal**: Small enough to read in one sitting, powerful enough to actually use.
