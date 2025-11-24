@@ -90,3 +90,25 @@ func (v Value[T]) Validate(validations ...func(Value[T]) error) Value[T] {
 
 	return v
 }
+
+// Collect appends all validation errors from the Value
+// into the provided Collector and returns the underlying
+// validated value.
+//
+// This allows multiple Value instances to contribute their
+// validation results when validating the fields of a struct.
+//
+// Example:
+//
+//	c := valtra.NewCollector()
+//	user := User{
+//		name := valtra.Val(input.Name).Validate(valtra.Required[string]()).Collect(c)
+//		age := valtra.Val(input.Age).Validate(valtra.Min(18)).Collect(c)
+//	}
+//	if !c.IsValid() {
+//	    return c.Errors()
+//	}
+func (v Value[T]) Collect(c *Collector) T {
+	c.errs = append(c.errs, v.errs...)
+	return v.value
+}
