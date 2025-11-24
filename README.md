@@ -2,6 +2,11 @@
 
 A type-safe, performant validation library for Go that uses generics and functional composition. No reflection, no struct tags - just clean, declarative validation! ⚡
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/bobch27/valtra-go)](https://goreportcard.com/report/github.com/bobch27/valtra-go)
+[![Go Reference](https://pkg.go.dev/badge/github.com/bobch27/valtra-go.svg)](https://pkg.go.dev/github.com/bobch27/valtra-go)
+[![Go Version](https://img.shields.io/badge/Go-1.24+-00ADD8?style=flat&logo=go)](https://go.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Why Yet Another Validation Package?
 
 Ever spent the night chasing a bug caused by a typo in a struct tag? 😴 I know I have... 🤦
@@ -89,6 +94,17 @@ Valtra is designed for performance:
 - **No reflection**: All type checking happens at compile time
 - **Zero allocations** (except for error messages when validation fails)
 - **Direct comparisons**: No indirection or type assertions in hot paths
+
+## Testing
+
+Valtra has **100% test coverage** with focused unit tests for each validation rule and the Collector. 
+
+Run tests locally:
+```bash
+go test -v
+go test -cover  # Shows 100% coverage
+```
+
 
 ## Design Philosophy
 
