@@ -46,34 +46,39 @@ type User struct {
     Age   int
 }
 
-func (u User) Validate() []error {
-    errs := []error{}
+func NewUser(name string, email string, age int) (User, error) {
+    c := valtra.NewCollector()
 
-    nameRes := valtra.Val(u.Name).Validate(valtra.Required[string](), valtra.MinLengthString[string](3))
-    errs = append(errs, nameRes.Errors()...)
-    
-    // value name ("email" in this case) is optional
-    // used only in error messages (default is "value")
-    emailRes := valtra.Val(u.Email, "email").Validate(valtra.Required[string](), valtra.Email())
-    errs = append(errs, emailRes.Errors()...)
+    user := User{
+        Name: valtra.Val(name).
+            Validate(valtra.Required[string](), valtra.MinLengthString[string](3)).
+            Collect(c),
+        // value name ("email" in this case) is optional
+        // used only in error messages (default is "value")
+        Email: valtra.Val(email, "email").
+            Validate(valtra.Required[string](), valtra.Email()).
+            Collect(c),
+        Age: valtra.Val(age).
+            Validate(valtra.Min[int](18)).
+            Collect(c),
+    }
 
-    ageRes := valtra.Val(u.Age).Validate(valtra.Min[int](18))
-    errs = append(errs, ageRes.Errors()...)
+    // check if there are any validation errors
+    if !c.IsValid() {
+        // return only first error
+        return User{}, c.Errors()[0]
+    }
 
-    return errs
+    return user, nil
 }
 
 func main() {
-    user := User{
-        Name: "Bobby",
-        Email: "hello@bobbydonev.com",
-        Age: 28,
-    }
-
-    errs := user.Validate()
+    user, errs := NewUser("Bobby", "hello@bobbydonev.com", 28)
     if len(errs) > 0 {
         log.Fatalln(errs[0])
     }
+
+    fmt.Println("Success!")
 }
 ```
 
