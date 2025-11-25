@@ -17,7 +17,7 @@ But reflection and string-based struct tags still lead to **runtime errors** whe
 
 Enter **Valtra**. It’s hardly even a package - just clever use of generics that let you validate data **declaratively and safely**. No reflection, no string parsing, just functions, types, and the compiler doing its job. 🔥
 
-Oh, and it's ~3x faster than validator (or about ~38x on cold starts). ⚡
+Oh, and it's **~3x faster** than validator (or about **~38x** on cold starts). ⚡
 
 ## Features
 
@@ -56,17 +56,17 @@ type User struct {
 func NewUser(name string, email string, age int) (User, error) {
     c := valtra.NewCollector()
 
+    // Value names (e.g. "email") and custom error messages (e.g. "Name is required") are optional.
+    // Names are only used in default error messages.
     user := User{
         Name: valtra.Val(name).
-            Validate(valtra.Required[string](), valtra.MinLengthString[string](3)).
+            Validate(valtra.Required[string]("Name is required"), valtra.MinLengthString(3)).
             Collect(c),
-        // value name ("email" in this case) is optional
-        // used only in error messages (default is "value")
         Email: valtra.Val(email, "email").
             Validate(valtra.Required[string](), valtra.Email()).
             Collect(c),
         Age: valtra.Val(age).
-            Validate(valtra.Min[int](18)).
+            Validate(valtra.Min(18, "Age must be 18 or over")).
             Collect(c),
     }
 
@@ -91,7 +91,7 @@ func main() {
 
 ## Performance
 
-Valtra is designed for speed. Here's how it compares to popular validation libraries:
+Valtra is designed for compile-time safety, but as a side effect, it’s incredibly fast. Here’s how it compares to popular validation libraries:
 
 ```
 goos: linux
