@@ -78,8 +78,8 @@ func Min[T Ordered](min T) func(Value[T]) error {
 // Example:
 //
 //	valtra.Val("username").Validate(valtra.MaxLengthString(20))
-func MaxLengthString[T ~string](max int) func(Value[T]) error {
-	return func(v Value[T]) error {
+func MaxLengthString(max int) func(Value[string]) error {
+	return func(v Value[string]) error {
 		if len(v.value) > max {
 			return fmt.Errorf("%s's length cannot be larger than %v", v.name, max)
 		}
@@ -126,8 +126,8 @@ func MaxLengthMap[K comparable, V any](max int) func(Value[map[K]V]) error {
 // Example:
 //
 //	valtra.Val("username").Validate(valtra.MinLengthString(5))
-func MinLengthString[T ~string](min int) func(Value[T]) error {
-	return func(v Value[T]) error {
+func MinLengthString(min int) func(Value[string]) error {
+	return func(v Value[string]) error {
 		if len(v.value) < min {
 			return fmt.Errorf("%s's length cannot be smaller than %v", v.name, min)
 		}

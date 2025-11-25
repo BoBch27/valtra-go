@@ -70,14 +70,14 @@ func TestMax(t *testing.T) {
 
 func TestMinLengthString(t *testing.T) {
 	t.Run("below min length fails", func(t *testing.T) {
-		v := valtra.Val("ab").Validate(valtra.MinLengthString[string](5))
+		v := valtra.Val("ab").Validate(valtra.MinLengthString(5))
 		if v.IsValid() {
 			t.Error("Expected validation to fail for string below min length")
 		}
 	})
 
 	t.Run("at min length passes", func(t *testing.T) {
-		v := valtra.Val("hello").Validate(valtra.MinLengthString[string](5))
+		v := valtra.Val("hello").Validate(valtra.MinLengthString(5))
 		if !v.IsValid() {
 			t.Errorf("Expected validation to pass, got errors: %v", v.Errors())
 		}
@@ -86,14 +86,14 @@ func TestMinLengthString(t *testing.T) {
 
 func TestMaxLengthString(t *testing.T) {
 	t.Run("above max length fails", func(t *testing.T) {
-		v := valtra.Val("hello").Validate(valtra.MaxLengthString[string](3))
+		v := valtra.Val("hello").Validate(valtra.MaxLengthString(3))
 		if v.IsValid() {
 			t.Error("Expected validation to fail for string above max length")
 		}
 	})
 
 	t.Run("at max length passes", func(t *testing.T) {
-		v := valtra.Val("abc").Validate(valtra.MaxLengthString[string](3))
+		v := valtra.Val("abc").Validate(valtra.MaxLengthString(3))
 		if !v.IsValid() {
 			t.Errorf("Expected validation to pass, got errors: %v", v.Errors())
 		}
@@ -191,8 +191,8 @@ func TestMultipleValidations(t *testing.T) {
 	t.Run("accumulates multiple errors", func(t *testing.T) {
 		v := valtra.Val("ab").Validate(
 			valtra.Required[string](),
-			valtra.MinLengthString[string](5),
-			valtra.MaxLengthString[string](1),
+			valtra.MinLengthString(5),
+			valtra.MaxLengthString(1),
 		)
 
 		if len(v.Errors()) != 2 {
@@ -203,8 +203,8 @@ func TestMultipleValidations(t *testing.T) {
 	t.Run("all validations pass", func(t *testing.T) {
 		v := valtra.Val("hello").Validate(
 			valtra.Required[string](),
-			valtra.MinLengthString[string](3),
-			valtra.MaxLengthString[string](10),
+			valtra.MinLengthString(3),
+			valtra.MaxLengthString(10),
 		)
 
 		if !v.IsValid() {
