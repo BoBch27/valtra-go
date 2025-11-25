@@ -11,14 +11,22 @@ import (
 // For strings, this means non-empty. For numbers, this means
 // non-zero. For pointers, this means non-nil.
 //
+// An optional custom error message can be provided as the
+// last parameter.
+//
 // Example:
 //
 //	valtra.Val("").Validate(valtra.Required[string]())  // fails
 //	valtra.Val("John").Validate(valtra.Required[string]())  // passes
-func Required[T comparable]() func(Value[T]) error {
+func Required[T comparable](errMssg ...string) func(Value[T]) error {
 	return func(v Value[T]) error {
 		var zero T
 		if v.value == zero {
+			// Return custom error message, if provided
+			if len(errMssg) > 0 && errMssg[0] != "" {
+				return fmt.Errorf("%s", errMssg[0])
+			}
+
 			return fmt.Errorf("%s is required", v.name)
 		}
 
@@ -40,12 +48,20 @@ type Ordered interface {
 // Works with all numeric types defined by the Ordered
 // constraint.
 //
+// An optional custom error message can be provided as the
+// last parameter.
+//
 // Example:
 //
 //	valtra.Val(100).Validate(valtra.Max(100))
-func Max[T Ordered](max T) func(Value[T]) error {
+func Max[T Ordered](max T, errMssg ...string) func(Value[T]) error {
 	return func(v Value[T]) error {
 		if v.value > max {
+			// Return custom error message, if provided
+			if len(errMssg) > 0 && errMssg[0] != "" {
+				return fmt.Errorf("%s", errMssg[0])
+			}
+
 			return fmt.Errorf("%s cannot be larger than %v", v.name, max)
 		}
 
@@ -59,12 +75,20 @@ func Max[T Ordered](max T) func(Value[T]) error {
 // Works with all numeric types defined by the Ordered
 // constraint.
 //
+// An optional custom error message can be provided as the
+// last parameter.
+//
 // Example:
 //
 //	valtra.Val(5).Validate(valtra.Min(1))
-func Min[T Ordered](min T) func(Value[T]) error {
+func Min[T Ordered](min T, errMssg ...string) func(Value[T]) error {
 	return func(v Value[T]) error {
 		if v.value < min {
+			// Return custom error message, if provided
+			if len(errMssg) > 0 && errMssg[0] != "" {
+				return fmt.Errorf("%s", errMssg[0])
+			}
+
 			return fmt.Errorf("%s cannot be smaller than %v", v.name, min)
 		}
 
@@ -75,12 +99,20 @@ func Min[T Ordered](min T) func(Value[T]) error {
 // MaxLengthString returns a validation that ensures the
 // length of a string does not exceed the given maximum.
 //
+// An optional custom error message can be provided as the
+// last parameter.
+//
 // Example:
 //
 //	valtra.Val("username").Validate(valtra.MaxLengthString(20))
-func MaxLengthString(max int) func(Value[string]) error {
+func MaxLengthString(max int, errMssg ...string) func(Value[string]) error {
 	return func(v Value[string]) error {
 		if len(v.value) > max {
+			// Return custom error message, if provided
+			if len(errMssg) > 0 && errMssg[0] != "" {
+				return fmt.Errorf("%s", errMssg[0])
+			}
+
 			return fmt.Errorf("%s's length cannot be larger than %v", v.name, max)
 		}
 
@@ -91,12 +123,20 @@ func MaxLengthString(max int) func(Value[string]) error {
 // MaxLengthSlice returns a validation that ensures the
 // length of a slice does not exceed the given maximum.
 //
+// An optional custom error message can be provided as the
+// last parameter.
+//
 // Example:
 //
 //	valtra.Val([]int{1}).Validate(valtra.MaxLengthSlice(2))
-func MaxLengthSlice[T any](max int) func(Value[[]T]) error {
+func MaxLengthSlice[T any](max int, errMssg ...string) func(Value[[]T]) error {
 	return func(v Value[[]T]) error {
 		if len(v.value) > max {
+			// Return custom error message, if provided
+			if len(errMssg) > 0 && errMssg[0] != "" {
+				return fmt.Errorf("%s", errMssg[0])
+			}
+
 			return fmt.Errorf("%s's length cannot be larger than %v", v.name, max)
 		}
 
@@ -107,12 +147,20 @@ func MaxLengthSlice[T any](max int) func(Value[[]T]) error {
 // MaxLengthMap returns a validation that ensures the
 // length of a map does not exceed the given maximum.
 //
+// An optional custom error message can be provided as the
+// last parameter.
+//
 // Example:
 //
 //	valtra.Val(map[string]int{"no": 1}).Validate(valtra.MaxLengthMap(2))
-func MaxLengthMap[K comparable, V any](max int) func(Value[map[K]V]) error {
+func MaxLengthMap[K comparable, V any](max int, errMssg ...string) func(Value[map[K]V]) error {
 	return func(v Value[map[K]V]) error {
 		if len(v.value) > max {
+			// Return custom error message, if provided
+			if len(errMssg) > 0 && errMssg[0] != "" {
+				return fmt.Errorf("%s", errMssg[0])
+			}
+
 			return fmt.Errorf("%s's length cannot be larger than %v", v.name, max)
 		}
 
@@ -123,12 +171,20 @@ func MaxLengthMap[K comparable, V any](max int) func(Value[map[K]V]) error {
 // MinLengthString returns a validation that ensures the
 // length of a string is at least the given minimum.
 //
+// An optional custom error message can be provided as the
+// last parameter.
+//
 // Example:
 //
 //	valtra.Val("username").Validate(valtra.MinLengthString(5))
-func MinLengthString(min int) func(Value[string]) error {
+func MinLengthString(min int, errMssg ...string) func(Value[string]) error {
 	return func(v Value[string]) error {
 		if len(v.value) < min {
+			// Return custom error message, if provided
+			if len(errMssg) > 0 && errMssg[0] != "" {
+				return fmt.Errorf("%s", errMssg[0])
+			}
+
 			return fmt.Errorf("%s's length cannot be smaller than %v", v.name, min)
 		}
 
@@ -139,12 +195,20 @@ func MinLengthString(min int) func(Value[string]) error {
 // MinLengthSlice returns a validation that ensures the
 // length of a slice is at least the given minimum.
 //
+// An optional custom error message can be provided as the
+// last parameter.
+//
 // Example:
 //
 //	valtra.Val([]int{1}).Validate(valtra.MinLengthSlice(1))
-func MinLengthSlice[T any](min int) func(Value[[]T]) error {
+func MinLengthSlice[T any](min int, errMssg ...string) func(Value[[]T]) error {
 	return func(v Value[[]T]) error {
 		if len(v.value) < min {
+			// Return custom error message, if provided
+			if len(errMssg) > 0 && errMssg[0] != "" {
+				return fmt.Errorf("%s", errMssg[0])
+			}
+
 			return fmt.Errorf("%s's length cannot be smaller than %v", v.name, min)
 		}
 
@@ -155,12 +219,20 @@ func MinLengthSlice[T any](min int) func(Value[[]T]) error {
 // MinLengthMap returns a validation that ensures the
 // length of a map is at least the given minimum.
 //
+// An optional custom error message can be provided as the
+// last parameter.
+//
 // Example:
 //
 //	valtra.Val(map[string]int{"no": 1}).Validate(valtra.MinLengthMap(1))
-func MinLengthMap[K comparable, V any](min int) func(Value[map[K]V]) error {
+func MinLengthMap[K comparable, V any](min int, errMssg ...string) func(Value[map[K]V]) error {
 	return func(v Value[map[K]V]) error {
 		if len(v.value) < min {
+			// Return custom error message, if provided
+			if len(errMssg) > 0 && errMssg[0] != "" {
+				return fmt.Errorf("%s", errMssg[0])
+			}
+
 			return fmt.Errorf("%s's length cannot be smaller than %v", v.name, min)
 		}
 
@@ -181,12 +253,20 @@ var emailRegex = regexp.MustCompile(`^(?:"(?:[^"]|\\")*"|[\p{L}\p{N}\p{M}._%+-]+
 //
 // For true validation, send a confirmation email.
 //
+// An optional custom error message can be provided as the
+// last parameter.
+//
 // Example:
 //
 //	valtra.Val("user@example.com").Validate(valtra.Email())
-func Email() func(Value[string]) error {
+func Email(errMssg ...string) func(Value[string]) error {
 	return func(v Value[string]) error {
 		if !emailRegex.MatchString(v.value) {
+			// Return custom error message, if provided
+			if len(errMssg) > 0 && errMssg[0] != "" {
+				return fmt.Errorf("%s", errMssg[0])
+			}
+
 			return fmt.Errorf("%s must be in correct email format", v.name)
 		}
 
