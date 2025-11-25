@@ -15,7 +15,9 @@ Ever spent the night chasing a bug caused by a typo in a struct tag? 😴 I know
 
 But reflection and string-based struct tags still lead to **runtime errors** when they should be **compile-time errors**. 🤷 That’s just not the Go way.
 
-Enter **Valtra**. It’s hardly even a package - just clever use of generics that let you validate data **declaratively and safely**. No reflection, no string parsing, just functions, types, and the compiler doing its job. ⚡
+Enter **Valtra**. It’s hardly even a package - just clever use of generics that let you validate data **declaratively and safely**. No reflection, no string parsing, just functions, types, and the compiler doing its job. 🔥
+
+Oh, and it's ~3x faster than validator (or about ~38x on cold starts). ⚡
 
 ## Features
 
@@ -24,7 +26,7 @@ Enter **Valtra**. It’s hardly even a package - just clever use of generics tha
 - **🎯 Declarative**: Reads like English, works like magic (except it's not magic, it's just good design).
 - **🔧 Composable**: Build complex validators from simple functions, like LEGO but for paranoid backend developers.
 - **📦 Minimal**: Small enough to read in one sitting, powerful enough to actually use.
-- **🚀 Fast**: Faster than reflection-based validators. Your users won't notice, but your benchmarks will look great.
+- **🚀 Fast**: 3x faster than the industry standard. Your users won't notice, but your [benchmarks](#performance) will look great.
 
 ## Installation
 
@@ -89,7 +91,43 @@ func main() {
 
 ## Performance
 
-Valtra is designed for performance:
+Valtra is designed for speed. Here's how it compares to popular validation libraries:
+
+```
+goos: linux
+goarch: amd64
+cpu: Intel(R) Core(TM) i5-8200Y CPU @ 1.30GHz
+
+BenchmarkValidator-4              335829              4008 ns/op             227 B/op          6 allocs/op
+BenchmarkValidatorNoCache-4        18385             54536 ns/op           18878 B/op        288 allocs/op
+BenchmarkOzzoValidation-4          41101             32812 ns/op            6678 B/op         81 allocs/op
+BenchmarkGoValidator-4            465760              3270 ns/op             390 B/op         22 allocs/op
+BenchmarkValtra-4                 922815              1283 ns/op               0 B/op          0 allocs/op
+```
+
+**Valtra is ~3x faster than the next fastest competitor with zero allocations.**
+
+[→ View full benchmark code and run it yourself](https://gist.github.com/bobch27/9fee6efd472b1d364f07bdbf975c719e)
+
+### Cold Start Performance
+
+In serverless environments (AWS Lambda, Cloud Functions) or short-lived processes (CLI tools, scripts), the difference is even more dramatic:
+
+```
+BenchmarkValidator (warm cache)                  ~3,000 ns/op
+BenchmarkValidatorNoCache (cold cache)           ~50,000 ns/op  ⚠️ 16x slower
+BenchmarkValtra (no cache needed)                ~1,300 ns/op
+```
+
+**Valtra is ~38x faster on cold starts** because there's no reflection cache to build. The "cache" is the compiled binary itself.
+
+This makes Valtra particularly well-suited for:
+- 🚀 Serverless functions (Lambda, Cloud Run, etc.)
+- 🛠️ CLI tools and scripts
+- 🔄 Microservices with frequent restarts
+- 📦 Short-lived containers
+
+### How Is It So Fast?
 
 - **No reflection**: All type checking happens at compile time
 - **Zero allocations** (except for error messages when validation fails)
