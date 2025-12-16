@@ -91,6 +91,19 @@ func (v Value[T]) Validate(validations ...func(Value[T]) error) Value[T] {
 	return v
 }
 
+func (v Value[T]) Transform(transformations ...func(Value[T]) (T, error)) Value[T] {
+	for _, fn := range transformations {
+		newVal, err := fn(v)
+		if err != nil {
+			v.errs = append(v.errs, err)
+		} else {
+			v.value = newVal
+		}
+	}
+
+	return v
+}
+
 // Collect appends all validation errors from the Value
 // into the provided Collector and returns the underlying
 // validated value.
