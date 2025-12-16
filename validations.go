@@ -12,7 +12,7 @@ import (
 // non-zero. For pointers, this means non-nil.
 //
 // An optional custom error message can be provided as the
-// last parameter.
+// parameter.
 //
 // Example:
 //
@@ -254,7 +254,7 @@ var emailRegex = regexp.MustCompile(`^(?:"(?:[^"]|\\")*"|[\p{L}\p{N}\p{M}._%+-]+
 // For true validation, send a confirmation email.
 //
 // An optional custom error message can be provided as the
-// last parameter.
+// parameter.
 //
 // Example:
 //

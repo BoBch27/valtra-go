@@ -1,7 +1,8 @@
 package valtra
 
-// Value holds a value to be validated along with its name
-// and any validation errors that occur during validation.
+// Value holds a value to be validated/transformed, along
+// with its name and any errors that occur during
+// validation/transformation.
 type Value[T any] struct {
 	value T
 	name  string
@@ -10,16 +11,21 @@ type Value[T any] struct {
 
 // Val creates a new Value[T] that wraps a value.
 //
-// This is the entry point for validation. Use the returned
-// Value's Validate method to apply validation rules.
+// This is the entry point for validation and transformation.
+//
+// Use the returned Value's Validate method to apply
+// validation rules.
+//
+// Use the returned Value's Transform method to apply
+// transformations.
 //
 // The optional name parameter is used in error messages to
-// identify which value failed validation. Default is
-// "value".
+// identify which value failed validation/transformation.
+// Default is "value".
 //
 // Example:
 //
-//	v := valtra.Val(25).Validate(valtra.Max(30))
+//	valtra.Val("bobby").Validate(valtra.Required[string]()).Transform(valtra.Uppercase())
 func Val[T any](value T, name ...string) Value[T] {
 	valName := "value"
 	if len(name) > 0 && name[0] != "" {
@@ -33,24 +39,24 @@ func Val[T any](value T, name ...string) Value[T] {
 	}
 }
 
-// Value returns the value being validated.
+// Value returns the value being validated/transformed.
 func (v Value[T]) Value() T {
 	return v.value
 }
 
 // Name returns the value's name, which is used to identify
-// the value in validation errors.
+// the value in validation/transformation errors.
 func (v Value[T]) Name() string {
 	return v.name
 }
 
-// Errors returns all validation errors that have occurred.
-// Returns an empty slice if validation passed.
+// Errors returns all errors that have occurred.
+// Returns an empty slice if validation/transformation passed.
 func (v Value[T]) Errors() []error {
 	return v.errs
 }
 
-// IsValid returns true if there are no validation errors,
+// IsValid returns true if there are no errors,
 // false otherwise.
 //
 // This is a convenience method equivalent to checking
@@ -91,6 +97,15 @@ func (v Value[T]) Validate(validations ...func(Value[T]) error) Value[T] {
 	return v
 }
 
+// Transform applies all provided transformation
+// functions to the given value.
+//
+// Each transformation function that returns an
+// error will add that error to the value's error list.
+//
+// Example:
+//
+//	v := valtra.Val("hello").Transform(valtra.Uppercase())
 func (v Value[T]) Transform(transformations ...func(Value[T]) (T, error)) Value[T] {
 	for _, fn := range transformations {
 		newVal, err := fn(v)
@@ -104,12 +119,12 @@ func (v Value[T]) Transform(transformations ...func(Value[T]) (T, error)) Value[
 	return v
 }
 
-// Collect appends all validation errors from the Value
+// Collect appends all errors from the Value
 // into the provided Collector and returns the underlying
-// validated value.
+// validated and transformed value.
 //
 // This allows multiple Value instances to contribute their
-// validation results when validating the fields of a struct.
+// results when validating/transforming the fields of a struct.
 //
 // Example:
 //
