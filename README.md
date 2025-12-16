@@ -1,6 +1,6 @@
 # Valtra
 
-A type-safe, performant validation library for Go that uses generics and functional composition. No reflection, no struct tags - just clean, declarative validation! ⚡
+A type-safe, performant **val**idation and **tra**nsformation library for Go that uses generics and functional composition. No reflection, no struct tags - just clean, declarative logic! ⚡
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/bobch27/valtra-go)](https://goreportcard.com/report/github.com/bobch27/valtra-go)
 [![Go Reference](https://pkg.go.dev/badge/github.com/bobch27/valtra-go.svg)](https://pkg.go.dev/github.com/bobch27/valtra-go)
@@ -15,16 +15,16 @@ Ever spent the night chasing a bug caused by a typo in a struct tag? 😴 I know
 
 But reflection and string-based struct tags still lead to **runtime errors** when they should be **compile-time errors**. 🤷 That’s just not the Go way.
 
-Enter **Valtra**. It’s hardly even a package - just clever use of generics that let you validate data **declaratively and safely**. No reflection, no string parsing, just functions, types, and the compiler doing its job. 🔥
+Enter **Valtra**. It’s barely even a package - just clever use of generics that let you validate (and transform) data **declaratively and safely**. No reflection, no string parsing, just functions, types, and the compiler doing its job. 🔥
 
-Oh, and it's **~3x faster** than validator (or about **~38x** on cold starts). ⚡
+Oh, and it's **~3x faster** than validator (or about **~40x** on cold starts). ⚡ Plus, it lets you shape your data, not just check it... 🧩
 
 ## Features
 
 - **🔒 Type-safe**: Your IDE will yell at you before the compiler does. The compiler will yell at you before your users do.
 - **⚡ Zero reflection**: Because it's 2025 and we have generics now.
 - **🎯 Declarative**: Reads like English, works like magic (except it's not magic, it's just good design).
-- **🔧 Composable**: Build complex validators from simple functions, like LEGO but for paranoid backend developers.
+- **🔧 Composable**: Build complex validations and transformations from simple functions, like LEGO but for paranoid backend developers.
 - **📦 Minimal**: Small enough to read in one sitting, powerful enough to actually use.
 - **🚀 Fast**: 3x faster than the industry standard. Your users won't notice, but your [benchmarks](#performance) will look great.
 
@@ -36,7 +36,7 @@ go get github.com/bobch27/valtra-go
 
 ## Usage
 
-Here's a complete example showing how to validate a struct using Valtra:
+Here's a complete example showing how to validate and transform a struct using Valtra:
 
 ```go
 package main
@@ -60,9 +60,11 @@ func NewUser(name string, email string, age int) (User, error) {
     // Names are only used in default error messages.
     user := User{
         Name: valtra.Val(name).
+            Transform(valtra.TrimSpace()).
             Validate(valtra.Required[string]("Name is required"), valtra.MinLengthString(3)).
             Collect(c),
         Email: valtra.Val(email, "email").
+            Transform(valtra.TrimSpace(), valtra.Lowercase()).
             Validate(valtra.Required[string](), valtra.Email()).
             Collect(c),
         Age: valtra.Val(age).
@@ -70,7 +72,7 @@ func NewUser(name string, email string, age int) (User, error) {
             Collect(c),
     }
 
-    // check if there are any validation errors
+    // check if there are any errors
     if !c.IsValid() {
         // return only first error
         return User{}, c.Errors()[0]
@@ -80,9 +82,9 @@ func NewUser(name string, email string, age int) (User, error) {
 }
 
 func main() {
-    user, errs := NewUser("Bobby", "hello@bobbydonev.com", 28)
-    if len(errs) > 0 {
-        log.Fatalln(errs[0])
+    user, err := NewUser("Bobby", "hello@bobbydonev.com", 28)
+    if err != nil {
+        log.Fatalln("failed to initiate user: %w", err)
     }
 
     fmt.Println("Success!")
@@ -114,8 +116,8 @@ BenchmarkValtra-4                 922815              1283 ns/op               0
 In serverless environments (AWS Lambda, Cloud Functions) or short-lived processes (CLI tools, scripts), the difference is even more dramatic:
 
 ```
-BenchmarkValidator (warm cache)                  ~3,000 ns/op
-BenchmarkValidatorNoCache (cold cache)           ~50,000 ns/op  ⚠️ 16x slower
+BenchmarkValidator (warm cache)                  ~3,800 ns/op
+BenchmarkValidatorNoCache (cold cache)           ~54,000 ns/op  ⚠️ 14x slower
 BenchmarkValtra (no cache needed)                ~1,300 ns/op
 ```
 
@@ -130,12 +132,12 @@ This makes Valtra particularly well-suited for:
 ### How Is It So Fast?
 
 - **No reflection**: All type checking happens at compile time
-- **Zero allocations** (except for error messages when validation fails)
+- **Zero allocations** (except for error messages when validation/transformation fails)
 - **Direct comparisons**: No indirection or type assertions in hot paths
 
 ## Testing
 
-Valtra has **100% test coverage** with focused unit tests for each validation rule and the Collector. 
+Valtra has **100% test coverage** with focused unit tests for each validation, transformation and the Collector. 
 
 Run tests locally:
 ```bash
@@ -147,7 +149,7 @@ go test -cover  # Shows 100% coverage
 ## Design Philosophy
 
 1. **Type safety over convenience**: Catch errors at compile time, not runtime
-2. **Composition over configuration**: Build complex validators from simple functions
+2. **Composition over configuration**: Build complex validations and transformations from simple functions
 3. **Explicitness over magic**: No reflection, no struct tags, no hidden behavior
 4. **Performance matters**: Zero-cost abstractions where possible
 
@@ -161,7 +163,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Inspiration
 
-Valtra was built to provide a type-safe validation experience in Go, drawing inspiration from:
+Valtra was built to provide a type-safe validation and transformation experience in Go, drawing inspiration from:
 
 - Rust's type system and traits  
 - OCaml's functional approach to validation  
