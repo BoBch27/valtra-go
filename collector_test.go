@@ -33,7 +33,7 @@ func TestCollector(t *testing.T) {
 	t.Run("collector with no errors", func(t *testing.T) {
 		c := valtra.NewCollector()
 
-		name := valtra.Val("John").Validate(valtra.Required[string]()).Collect(c)
+		name := valtra.Val(" John ").Validate(valtra.Required[string]()).Transform(valtra.TrimSpace()).Collect(c)
 		age := valtra.Val(25).Validate(valtra.Min(18)).Collect(c)
 
 		if !c.IsValid() {
