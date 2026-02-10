@@ -34,6 +34,15 @@ func TestTrimSpace(t *testing.T) {
 	})
 }
 
+func TestCapitalise(t *testing.T) {
+	t.Run("string with capital first letter", func(t *testing.T) {
+		v := valtra.Val("bobby").Transform(valtra.Capitalise())
+		if v.Value() != "Bobby" {
+			t.Errorf("Expected transformation to pass, got errors: %v", v.Errors())
+		}
+	})
+}
+
 func TestMultipleTransformations(t *testing.T) {
 	t.Run("all transformations pass", func(t *testing.T) {
 		v := valtra.Val(" hello ").Transform(
