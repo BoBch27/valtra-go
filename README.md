@@ -17,7 +17,7 @@ But reflection and string-based struct tags still lead to **runtime errors** whe
 
 Enter **Valtra**. It’s barely even a package - just clever use of generics that let you validate (and transform) data **declaratively and safely**. No reflection, no string parsing, just functions, types, and the compiler doing its job. 🔥
 
-Oh, and it's **~3x faster** than validator (or about **~40x** on cold starts). ⚡ Plus, it lets you shape your data, not just check it... 🧩
+Oh, and it's **~3x faster** than validator (or about **~40x** on cold starts). ⚡ Plus, it lets you **shape** your data, not just check it... 🧩
 
 ## Features
 
@@ -121,7 +121,7 @@ BenchmarkValidatorNoCache (cold cache)           ~54,000 ns/op  ⚠️ 14x slowe
 BenchmarkValtra (no cache needed)                ~1,300 ns/op
 ```
 
-**Valtra is ~38x faster on cold starts** because there's no reflection cache to build. The "cache" is the compiled binary itself.
+**Valtra is ~40x faster on cold starts** because there's no reflection cache to build. The "cache" is the compiled binary itself.
 
 This makes Valtra particularly well-suited for:
 - 🚀 Serverless functions (Lambda, Cloud Run, etc.)
