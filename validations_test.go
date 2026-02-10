@@ -297,6 +297,60 @@ func TestEmail(t *testing.T) {
 	})
 }
 
+func TestOneOf(t *testing.T) {
+	t.Run("valid one of passes", func(t *testing.T) {
+		v := valtra.Val("delivered").Validate(valtra.OneOf([]string{"shipped", "delivered"}))
+		if !v.IsValid() {
+			t.Errorf("Expected validation to pass, got errors: %v", v.Errors())
+		}
+	})
+
+	t.Run("invalid one of fails", func(t *testing.T) {
+		v := valtra.Val("delivered").Validate(valtra.OneOf([]string{"shipped", "returned"}))
+		if v.IsValid() {
+			t.Error("Expected validation to fail for invalid enum")
+		}
+	})
+
+	t.Run("custom error message", func(t *testing.T) {
+		customMsg := "Value must be one of provided"
+		v := valtra.Val("delivered").Validate(valtra.OneOf([]string{"shipped", "returned"}, customMsg))
+		if v.IsValid() {
+			t.Error("Expected validation to fail")
+		}
+		if v.Errors()[0].Error() != customMsg {
+			t.Errorf("Expected %q, got %q", customMsg, v.Errors()[0].Error())
+		}
+	})
+}
+
+func TestForbidden(t *testing.T) {
+	t.Run("valid not in passes", func(t *testing.T) {
+		v := valtra.Val("delivered").Validate(valtra.NotIn([]string{"shipped", "returned"}))
+		if !v.IsValid() {
+			t.Errorf("Expected validation to pass, got errors: %v", v.Errors())
+		}
+	})
+
+	t.Run("invalid not in fails", func(t *testing.T) {
+		v := valtra.Val("delivered").Validate(valtra.NotIn([]string{"shipped", "delivered"}))
+		if v.IsValid() {
+			t.Error("Expected validation to fail for invalid enum")
+		}
+	})
+
+	t.Run("custom error message", func(t *testing.T) {
+		customMsg := "Value cannot be one of provided"
+		v := valtra.Val("delivered").Validate(valtra.NotIn([]string{"shipped", "delivered"}, customMsg))
+		if v.IsValid() {
+			t.Error("Expected validation to fail")
+		}
+		if v.Errors()[0].Error() != customMsg {
+			t.Errorf("Expected %q, got %q", customMsg, v.Errors()[0].Error())
+		}
+	})
+}
+
 func TestMultipleValidations(t *testing.T) {
 	t.Run("accumulates multiple errors", func(t *testing.T) {
 		v := valtra.Val("ab").Validate(
