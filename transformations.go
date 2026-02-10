@@ -7,7 +7,7 @@ import "strings"
 //
 // Example:
 //
-//	valtra.Val("").Transform(valtra.Uppercase())
+//	valtra.Val("ok").Transform(valtra.Uppercase())
 func Uppercase() func(Value[string]) (string, error) {
 	return func(v Value[string]) (string, error) {
 		return strings.ToUpper(v.value), nil
@@ -19,7 +19,7 @@ func Uppercase() func(Value[string]) (string, error) {
 //
 // Example:
 //
-//	valtra.Val("").Transform(valtra.Lowercase())
+//	valtra.Val("JOHN@EXAMPLE.COM").Transform(valtra.Lowercase())
 func Lowercase() func(Value[string]) (string, error) {
 	return func(v Value[string]) (string, error) {
 		return strings.ToLower(v.value), nil
@@ -31,7 +31,7 @@ func Lowercase() func(Value[string]) (string, error) {
 //
 // Example:
 //
-//	valtra.Val("").Transform(valtra.TrimSpace())
+//	valtra.Val(" john ").Transform(valtra.TrimSpace())
 func TrimSpace() func(Value[string]) (string, error) {
 	return func(v Value[string]) (string, error) {
 		return strings.TrimSpace(v.value), nil
@@ -43,7 +43,7 @@ func TrimSpace() func(Value[string]) (string, error) {
 //
 // Example:
 //
-//	valtra.Val("").Transform(valtra.Capitalise())
+//	valtra.Val("john").Transform(valtra.Capitalise())
 func Capitalise() func(Value[string]) (string, error) {
 	return func(v Value[string]) (string, error) {
 		return strings.ToUpper(v.value[:1]) + strings.ToLower(v.value[1:]), nil
