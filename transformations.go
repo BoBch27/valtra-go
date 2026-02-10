@@ -37,3 +37,15 @@ func TrimSpace() func(Value[string]) (string, error) {
 		return strings.TrimSpace(v.value), nil
 	}
 }
+
+// Capitalise returns a transformation that converts the
+// first character of the value to upper case.
+//
+// Example:
+//
+//	valtra.Val("").Transform(valtra.Capitalise())
+func Capitalise() func(Value[string]) (string, error) {
+	return func(v Value[string]) (string, error) {
+		return strings.ToUpper(v.value[:1]) + strings.ToLower(v.value[1:]), nil
+	}
+}
