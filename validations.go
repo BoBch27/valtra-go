@@ -3,6 +3,7 @@ package valtra
 import (
 	"fmt"
 	"regexp"
+	"slices"
 )
 
 // Required returns a validation that ensures the value is
@@ -268,6 +269,54 @@ func Email(errMssg ...string) func(Value[string]) error {
 			}
 
 			return fmt.Errorf("%s must be in correct email format", v.name)
+		}
+
+		return nil
+	}
+}
+
+// OneOf returns a validation that ensures the value matches
+// one of the provided allowed values.
+//
+// An optional custom error message can be provided as the
+// last parameter.
+//
+// Example:
+//
+//	valtra.Val("pending").Validate(valtra.OneOf([]string{"pending", "approved", "rejected"}))
+func OneOf[T comparable](values []T, errMssg ...string) func(Value[T]) error {
+	return func(v Value[T]) error {
+		if !slices.Contains(values, v.value) {
+			// Return custom error message, if provided
+			if len(errMssg) > 0 && errMssg[0] != "" {
+				return fmt.Errorf("%s", errMssg[0])
+			}
+
+			return fmt.Errorf("%s must be one of: %v", v.name, values)
+		}
+
+		return nil
+	}
+}
+
+// NotIn returns a validation that ensures the value
+// does not match any of the provided forbidden values.
+//
+// An optional custom error message can be provided as the
+// last parameter.
+//
+// Example:
+//
+//	valtra.Val("john").Validate(valtra.NotIn([]string{"admin", "root", "system"}))
+func NotIn[T comparable](values []T, errMssg ...string) func(Value[T]) error {
+	return func(v Value[T]) error {
+		if slices.Contains(values, v.value) {
+			// Return custom error message, if provided
+			if len(errMssg) > 0 && errMssg[0] != "" {
+				return fmt.Errorf("%s", errMssg[0])
+			}
+
+			return fmt.Errorf("%s cannot be one of: %v", v.name, values)
 		}
 
 		return nil
